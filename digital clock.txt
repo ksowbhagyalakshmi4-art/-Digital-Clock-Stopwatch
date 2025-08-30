@@ -1,0 +1,69 @@
+import tkinter as tk
+from time import strftime
+import time
+
+# ---------------- Digital Clock ----------------
+def update_clock():
+    current_time = strftime("%H:%M:%S %p")
+    clock_label.config(text=current_time)
+    clock_label.after(1000, update_clock)
+
+# ---------------- Stopwatch ----------------
+stopwatch_running = False
+stopwatch_time = 0
+
+def update_stopwatch():
+    if stopwatch_running:
+        global stopwatch_time
+        stopwatch_time += 1
+        mins, secs = divmod(stopwatch_time, 60)
+        hrs, mins = divmod(mins, 60)
+        stopwatch_label.config(text=f"{hrs:02}:{mins:02}:{secs:02}")
+        stopwatch_label.after(1000, update_stopwatch)
+
+def start_stopwatch():
+    global stopwatch_running
+    if not stopwatch_running:
+        stopwatch_running = True
+        update_stopwatch()
+
+def stop_stopwatch():
+    global stopwatch_running
+    stopwatch_running = False
+
+def reset_stopwatch():
+    global stopwatch_running, stopwatch_time
+    stopwatch_running = False
+    stopwatch_time = 0
+    stopwatch_label.config(text="00:00:00")
+
+# ---------------- Tkinter GUI ----------------
+root = tk.Tk()
+root.title("Digital Clock & Stopwatch")
+root.geometry("400x300")
+root.resizable(False, False)
+
+# Digital Clock
+clock_label = tk.Label(root, text="", font=("Arial", 40), fg="cyan", bg="black")
+clock_label.pack(pady=20)
+update_clock()
+
+# Stopwatch
+stopwatch_label = tk.Label(root, text="00:00:00", font=("Arial", 35), fg="white", bg="gray20")
+stopwatch_label.pack(pady=20)
+
+# Stopwatch Buttons
+btn_frame = tk.Frame(root, bg="gray20")
+btn_frame.pack(pady=10)
+
+start_btn = tk.Button(btn_frame, text="Start", command=start_stopwatch, width=10, bg="green", fg="white")
+start_btn.grid(row=0, column=0, padx=5)
+
+stop_btn = tk.Button(btn_frame, text="Stop", command=stop_stopwatch, width=10, bg="red", fg="white")
+stop_btn.grid(row=0, column=1, padx=5)
+
+reset_btn = tk.Button(btn_frame, text="Reset", command=reset_stopwatch, width=10, bg="blue", fg="white")
+reset_btn.grid(row=0, column=2, padx=5)
+
+root.configure(bg="black")
+root.mainloop()
